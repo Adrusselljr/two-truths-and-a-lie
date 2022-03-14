@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import "./App.css"
+import 'bootstrap/dist/css/bootstrap.min.css'
 
 export class App extends Component {
 
@@ -96,8 +97,8 @@ export class App extends Component {
                     <label>Vote: </label>
                     <input type="number" name="vote" value={ this.state.vote } onChange={ this.chsangeHandlerVote }/><br/>
 
-                    <button>Send Prompt</button>
-                    <button>Send Vote</button>
+                    <button className="btn btn-primary">Send Prompt</button>
+                    <button className="btn btn-primary">Send Vote</button>
 
                 </form>
 
