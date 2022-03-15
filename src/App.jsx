@@ -62,7 +62,7 @@ export class App extends Component {
         )
     }
 
-    chsangeHandlerVote = e => {
+    changeHandlerVote = e => {
         this.setState({
             vote: e.target.value
         }, () => console.log(this.state))
@@ -112,7 +112,7 @@ export class App extends Component {
 
                     <div className="form-group">
                         <label>Vote: </label>
-                        <input className='form-control' type="number" name="vote" value={ this.state.vote } onChange={ this.chsangeHandlerVote }/><br/>
+                        <input className='form-control vote' type="number" name="vote" value={ this.state.vote } onChange={ this.changeHandlerVote }/><br/>
                     </div>
 
                     <p>----------------------------------------------</p>
