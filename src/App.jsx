@@ -6,7 +6,7 @@ export class App extends Component {
 
     state = {
         userName: "",
-        vote: 0,
+        vote: 1,
         promptObj: {
             promptOne: {
                 input: "",
@@ -26,7 +26,7 @@ export class App extends Component {
     changeHandlerUserName = e => {
         this.setState({
             userName: e.target.value
-        }, () => console.log(this.state))
+        })
     }
 
     changeHandlerPrompts = e => {
@@ -42,7 +42,7 @@ export class App extends Component {
         }
         this.setState(
             newObj
-        ,() => console.log(this.state))
+        )
     }
 
     changeHandlerCheckbox = e => {
@@ -58,21 +58,105 @@ export class App extends Component {
         }
         this.setState(
             newObj
-            ,() => console.log(this.state)
         )
     }
 
     changeHandlerVote = e => {
         this.setState({
-            vote: e.target.value
-        }, () => console.log(this.state))
+                vote: e.target.value,
+        })
+    }
+
+    clickHandlerPrompt = async() => {
+        const { userName, promptObj: { promptOne, promptTwo, promptThree } } = this.state
+
+        const newBody = {
+            userName: userName,
+            prompts: {
+                promptOne: {
+                    prompt: promptOne.input,
+                    isLie: promptOne.isLie
+                },
+                promptTwo: {
+                    prompt: promptTwo.input,
+                    isLie: promptTwo.isLie
+                },
+                promptThree: {
+                    prompt: promptThree.input,
+                    isLie: promptThree.isLie
+                }
+            }
+        }
+
+        const serverURL = "http://cab2-108-53-232-66.ngrok.io"
+        const response = await fetch(`${serverURL}/prompt-submit`, {
+            method: "POST", // *GET, POST, PUT, DELETE, etc.
+            mode: "cors",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                "access-control-request-headers": "content-type",
+                "x-Trigger": "CORS",
+            },
+            body: JSON.stringify(
+                newBody
+            )
+        })
+        const promptResponse = await response.text()
+        console.log(promptResponse)
+        return promptResponse
+    }
+
+    clickHandlerVote = async() => {
+        const { userName, vote } = this.state
+
+        const newBody = {
+            userName: userName,
+            promptVote: Number(vote)
+        }
+
+        const serverURL = "http://cab2-108-53-232-66.ngrok.io"
+        const response = await fetch(`${serverURL}/prompt-vote`, {
+            method: "POST", // *GET, POST, PUT, DELETE, etc.
+            mode: "cors",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                "access-control-request-headers": "content-type",
+                "x-Trigger": "CORS",
+            },
+            body: JSON.stringify(
+                newBody
+            )
+        })
+        const voteResponse = await response.text()
+        console.log(voteResponse)
+        return voteResponse
+    }
+
+    clickHandlerPing = async(userName) => {
+        const serverURL = "http://cab2-108-53-232-66.ngrok.io"
+        const response = await fetch(`${serverURL}/ping`, {
+            method: "POST", // *GET, POST, PUT, DELETE, etc.
+            mode: "cors",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                "access-control-request-headers": "content-type",
+                "x-Trigger": "CORS",
+            },
+            body: JSON.stringify({
+                userName
+            })
+        })
+        const pingResponse = await response.text()
+        console.log(pingResponse)
+        return pingResponse
     }
 
     render() {
         return (
             <div className='App'>
-
-                <form>
 
                     <h1>Two Truths and a Lie</h1>
 
@@ -112,15 +196,14 @@ export class App extends Component {
 
                     <div className="form-group">
                         <label>Vote: </label>
-                        <input className='form-control vote' type="number" name="vote" value={ this.state.vote } onChange={ this.changeHandlerVote }/><br/>
+                        <input min={ 1 } max={ 3 } className='form-control vote' type="number" name="vote" value={ this.state.vote } onChange={ this.changeHandlerVote }/><br/>
                     </div>
 
                     <p>----------------------------------------------</p>
 
-                    <button className="btn btn-primary">Send Prompt</button>
-                    <button className="btn btn-primary">Send Vote</button>
-
-                </form>
+                    <button onClick={this.clickHandlerPrompt} className="btn btn-primary">Send Prompt</button>
+                    <button onClick={this.clickHandlerVote} className="btn btn-primary">Send Vote</button>
+                    <button onClick={() => this.clickHandlerPing(this.state.userName)} className="btn btn-primary">Send Ping</button>
 
             </div>
         )
