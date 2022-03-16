@@ -70,14 +70,15 @@ export class App extends Component {
     getPromptPoll = async() => {
         const currentPoll = await clickHandlerPoll()
         const parsedPollData = JSON.parse(currentPoll)
-        console.log("parsedPollData ", parsedPollData)
-        console.log(parsedPollData.promptVotes)
-        
+
         this.setState({
             fetchedUserName: parsedPollData.currentPrompt.userName,
             fetchedPromptOne: parsedPollData.currentPrompt.prompts.promptOne.prompt,
             fetchedPromptTwo: parsedPollData.currentPrompt.prompts.promptTwo.prompt,
-            fetchedPromptThree: parsedPollData.currentPrompt.prompts.promptThree.prompt
+            fetchedPromptThree: parsedPollData.currentPrompt.prompts.promptThree.prompt,
+            fetchedVoteOne: parsedPollData.promptVotes[1],
+            fetchedVoteTwo: parsedPollData.promptVotes[2],
+            fetchedVoteThree: parsedPollData.promptVotes[3]
         })
     }
 
