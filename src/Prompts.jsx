@@ -1,28 +1,33 @@
 import React, { Component } from 'react'
 import "./App.css"
 import 'bootstrap/dist/css/bootstrap.min.css'
+import Input from './components/Input'
+import Results from './components/Results'
 
 const serverURL = "http://ad4d-108-53-232-66.ngrok.io"
 
-export class App extends Component {
+export class Prompts extends Component {
 
     state = {
         userName: "",
         vote: 1,
-        promptObj: {
-            promptOne: {
+        prompts: [
+            {
+                name: "promptOne",
                 input: "",
                 isLie: false,
             },
-            promptTwo: {
+            {
+                name: "promptTwo",
                 input: "",
                 isLie: false,
             },
-            promptThree: {
+            {
+                name: "promptThree",
                 input: "",
                 isLie: false,
             }
-        },
+        ],
         fetchedUserName: "",
         fetchedPromptOne: "",
         fetchedPromptTwo: "",
@@ -39,35 +44,45 @@ export class App extends Component {
     }
 
     changeHandlerPrompts = e => {
-        let newObj = {
-            ...this.state,
-            promptObj: {
-                ...this.state.promptObj,
-                [e.target.name]: {
-                    ...this.state.promptObj[e.target.name],
+        let updatedPrompts = [
+            ...this.state.prompts
+        ]
+
+        updatedPrompts = updatedPrompts.map(elm => {
+            if(elm.name === e.target.name) {
+                return {
+                    ...elm,
                     input: e.target.value
                 }
             }
-        }
-        this.setState(
-            newObj
-        )
+            return {
+                ...elm
+            }
+        })
+        this.setState({
+            prompts: updatedPrompts
+        })
     }
 
     changeHandlerCheckbox = e => {
-        let newObj = {
-            ...this.state,
-            promptObj: {
-                ...this.state.promptObj,
-                [e.target.name]: {
-                    ...this.state.promptObj[e.target.name],
+        let updatedPrompts = [
+            ...this.state.prompts
+        ]
+
+        updatedPrompts = updatedPrompts.map(elm => {
+            if(elm.name === e.target.name) {
+                return {
+                    ...elm,
                     isLie: e.target.checked
                 }
             }
-        }
-        this.setState(
-            newObj
-        )
+            return {
+                ...elm
+            }
+        })
+        this.setState({
+            prompts: updatedPrompts
+        })
     }
 
     changeHandlerVote = e => {
@@ -77,20 +92,20 @@ export class App extends Component {
     }
 
     clickHandlerPrompt = async() => {
-        const { userName, promptObj: { promptOne, promptTwo, promptThree } } = this.state
+        const { userName, prompts: [ promptOne, promptTwo, promptThree ] } = this.state
 
         const newBody = {
             userName: userName,
             prompts: {
-                promptOne: {
+                [promptOne.name]: {
                     prompt: promptOne.input,
                     isLie: promptOne.isLie
                 },
-                promptTwo: {
+                [promptTwo.name]: {
                     prompt: promptTwo.input,
                     isLie: promptTwo.isLie
                 },
-                promptThree: {
+                [promptThree.name]: {
                     prompt: promptThree.input,
                     isLie: promptThree.isLie
                 }
@@ -175,7 +190,6 @@ export class App extends Component {
         })
     }
 
-
     render() {
         return (
             <div className='App'>
@@ -188,29 +202,14 @@ export class App extends Component {
                     <p>----------------------------------------------</p>
                 </div>
 
-                <div className="form-group">
-                    <label>Prompt 1 : </label>
-                    <input className='form-control' type="text" name="promptOne" value={ this.state.promptObj.promptOne.input } onChange={ this.changeHandlerPrompts }/>
-                    <label className='form-check-label'>  isLie: </label>
-                    <input className='form-check-input' type="checkbox" name="promptOne" checked={ this.state.promptObj.promptOne.isLie } onChange={ this.changeHandlerCheckbox }/>
-                    <p>----------------------------------------------</p>
-                </div>
-
-                <div className="form-group">
-                    <label>Prompt 2 : </label>
-                    <input className='form-control' type="text" name="promptTwo" value={ this.state.promptObj.promptTwo.input } onChange={ this.changeHandlerPrompts }/>
-                    <label className='form-check-label'>  isLie: </label>
-                    <input className='form-check-input' type="checkbox" name="promptTwo" checked={ this.state.promptObj.promptTwo.isLie } onChange={ this.changeHandlerCheckbox }/>
-                    <p>----------------------------------------------</p>
-                </div>
-
-                <div className="form-group">
-                    <label>Prompt 3 : </label>
-                    <input className='form-control' type="text" name="promptThree" value={ this.state.promptObj.promptThree.input } onChange={ this.changeHandlerPrompts }/>
-                    <label className='form-check-label'>  isLie: </label>
-                    <input className='form-check-input' type="checkbox" name="promptThree" checked={ this.state.promptObj.promptThree.isLie } onChange={ this.changeHandlerCheckbox }/>
-                    <p>----------------------------------------------</p>
-                </div>
+                { this.state.prompts.map((elm, idx) => {
+                    return <Input
+                    key={idx}
+                    promptsProp={elm}
+                    changeHandlerPromptsProp={ this.changeHandlerPrompts }
+                    changeHandlerCheckboxProps={ this.changeHandlerCheckbox }
+                    />
+                }) }
 
                 <div className="form-group">
                     <label>Vote : </label>
@@ -218,32 +217,31 @@ export class App extends Component {
                     <p>----------------------------------------------</p>
                 </div>
 
-                <button onClick={this.clickHandlerPrompt} className="btn btn-primary">Send Prompt</button>
-                <button onClick={this.clickHandlerVote} className="btn btn-primary">Send Vote</button>
-                <button onClick={() => this.clickHandlerPing(this.state.userName)} className="btn btn-primary">Send Ping</button><br/><br/><br/><br/>
+                
+                <button onClick={ this.clickHandlerPrompt } className="btn btn-primary">Send Prompt</button>
+                <button onClick={ this.clickHandlerVote } className="btn btn-primary">Send Vote</button>
+                <button onClick={ () => this.clickHandlerPing(this.state.userName) } className="btn btn-primary">Send Ping</button><br/><br/><br/><br/>
 
                 <p>-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------</p>
                 <br/><br/>
 
-                <h1>Results :</h1><br/>
-
-                <p>UserName : {this.state.fetchedUserName}</p>
-                <p>Prompt 1 : {this.state.fetchedPromptOne}</p>
-                <p>Prompt 2 : {this.state.fetchedPromptTwo}</p>
-                <p>Prompt 3 : {this.state.fetchedPromptThree}</p>
-                <p>Vote 1 : {this.state.fetchedVoteOne}</p>
-                <p>Vote 2 : {this.state.fetchedVoteTwo}</p>
-                <p>Vote 3 : {this.state.fetchedVoteThree}</p>
-
-                <button onClick={this.getPromptPoll} className="btn btn-primary">Get Poll</button>
+                <Results
+                getPromptPollProp={ this.getPromptPoll }
+                fetchedUserNameProp={ this.state.fetchedUserName }
+                fetchedPromptOneProp={ this.state.fetchedPromptOne }
+                fetchedPromptTwoProp={ this.state.fetchedPromptTwo }
+                fetchedPromptThreeProp={ this.state.fetchedPromptThree }
+                fetchedVoteOneProp={ this.state.fetchedVoteOne }
+                fetchedVoteTwoProp={ this.state.fetchedVoteTwo }
+                fetchedVoteThreeProp={ this.state.fetchedVoteThree }
+                />
 
             </div>
-
         )
     }
 }
 
-export default App
+export default Prompts
 
 const clickHandlerPoll = async() => {
     const response = await fetch(`${serverURL}/prompt-poll`, {
