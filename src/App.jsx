@@ -225,18 +225,6 @@ export class App extends Component {
                 <p>-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------</p>
                 <br/><br/>
 
-                <h1>Results :</h1><br/>
-
-                <p>UserName : {this.state.fetchedUserName}</p>
-                <p>Prompt 1 : {this.state.fetchedPromptOne}</p>
-                <p>Prompt 2 : {this.state.fetchedPromptTwo}</p>
-                <p>Prompt 3 : {this.state.fetchedPromptThree}</p>
-                <p>Vote 1 : {this.state.fetchedVoteOne}</p>
-                <p>Vote 2 : {this.state.fetchedVoteTwo}</p>
-                <p>Vote 3 : {this.state.fetchedVoteThree}</p>
-
-                <button onClick={this.getPromptPoll} className="btn btn-primary">Get Poll</button>
-
             </div>
 
         )
